@@ -1,0 +1,14 @@
+docker stop $(docker ps --filter 'name=flask-test-server2' -q)
+docker rm $(docker ps --filter 'name=flask-test-server2' -a -q)
+docker rmi flask-test-server2
+
+docker build -t flask-test-server-jquery .
+
+docker run --name ai-hsgd-verfiy-server \
+           --publish 8311:8311 \
+           --net=host \
+           -d \
+           -it \
+           -v ai-hsgd-verfiy-server-logs:/logs ai-hsgd-verfiy-server
+
+docker run --name flask-test-server-jquery --publish 8312:8312 -it flask-test-server-jquery

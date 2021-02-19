@@ -7,7 +7,7 @@
 
 <br>
 
-- 참고2(인공지능을 위한 기초수학): http://matrix.skku.ac.kr/math4ai/  
+### 참고2(성균관대, 인공지능을 위한 기초수학): http://matrix.skku.ac.kr/math4ai/  
 
 ### 20강. 확률변수
 > 평균(기댓값), 분산, 표준편차
