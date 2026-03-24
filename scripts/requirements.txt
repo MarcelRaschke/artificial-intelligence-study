@@ -1,0 +1,25 @@
+# Core data science
+numpy
+pandas
+matplotlib
+scikit-learn
+
+# Deep learning
+tensorflow
+keras
+torch
+
+# NLP
+nltk
+gensim
+
+# Image processing
+Pillow
+pytesseract
+
+# Web/serving
+flask
+
+# Jupyter
+jupyter
+notebook

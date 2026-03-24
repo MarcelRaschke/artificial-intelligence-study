@@ -50,23 +50,8 @@ pip install --upgrade pip --quiet
 
 # --- Install dependencies ---
 
-info "Installing core packages (numpy, pandas, matplotlib, scikit-learn)..."
-pip install --quiet numpy pandas matplotlib scikit-learn
-
-info "Installing deep learning frameworks (tensorflow, keras, torch)..."
-pip install --quiet tensorflow keras torch
-
-info "Installing NLP packages (nltk, gensim)..."
-pip install --quiet nltk gensim
-
-info "Installing image processing packages (Pillow, pytesseract)..."
-pip install --quiet Pillow pytesseract
-
-info "Installing web/serving packages (flask)..."
-pip install --quiet flask
-
-info "Installing Jupyter..."
-pip install --quiet jupyter notebook
+info "Installing packages from requirements.txt..."
+pip install --quiet -r "$SCRIPT_DIR/requirements.txt"
 
 # --- Summary ---
 
