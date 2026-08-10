@@ -1,7 +1,25 @@
-
 # Virtual environment
 venv/
 
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+*.swp
+*.swo
+*~
+
+# Project-specific
 03_Tensorflow_알고리즘구현/Untitled.ipynb
 03_Tensorflow_알고리즘구현/.ipynb_checkpoints/02_linear_regression_tensorflow-checkpoint.ipynb
 03_Tensorflow_알고리즘구현/02_linear_regression_tensorflow.ipynb
