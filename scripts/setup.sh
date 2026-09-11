@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Unified Setup Script for artificial-intelligence-study
-# Installs all Python dependencies needed across the repository.
+# AI Study Repository Setup Script
+# Creates Python virtual environment and installs ML dependencies
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
@@ -14,57 +14,115 @@ NC='\033[0m'
 
 info()  { echo -e "${GREEN}[INFO]${NC} $*"; }
 warn()  { echo -e "${YELLOW}[WARN]${NC} $*"; }
-error() { echo -e "${RED}[ERROR]${NC} $*"; exit 1; }
+error() { echo -e "${RED}[ERROR]${NC} $*"; }
 
 # --- Check prerequisites ---
 
-if ! command -v python3 &>/dev/null; then
-    error "Python 3 is required but not found. Install it from https://www.python.org/"
+check_python() {
+    if command -v python3 &>/dev/null; then
+        local version
+        version=$(python3 --version 2>&1 | awk '{print $2}')
+        local major
+        major=$(echo "$version" | cut -d. -f1)
+        if [ "$major" -ge 3 ]; then
+            info "Python $version found"
+            return 0
+        else
+            error "Python 3 required, found $version"
+            return 1
+        fi
+    else
+        error "Python 3 not found"
+        return 1
+    fi
+}
+
+check_pip() {
+    if command -v pip3 &>/dev/null; then
+        info "pip3 found"
+        return 0
+    else
+        error "pip3 not found"
+        return 1
+    fi
+}
+
+# --- Setup venv ---
+
+setup_venv() {
+    if [ -d "$PROJECT_DIR/venv" ]; then
+        info "Virtual environment already exists at $PROJECT_DIR/venv"
+        return 0
+    fi
+
+    info "Creating Python virtual environment..."
+    python3 -m venv "$PROJECT_DIR/venv"
+    info "Virtual environment created"
+}
+
+# --- Activate and install dependencies ---
+
+install_dependencies() {
+    # Source the activation script
+    # shellcheck source=/dev/null
+    source "$PROJECT_DIR/venv/bin/activate"
+
+    info "Upgrading pip..."
+    pip install --upgrade pip setuptools wheel
+
+    info "Installing dependencies from requirements.txt..."
+    if [ -f "$PROJECT_DIR/scripts/requirements.txt" ]; then
+        pip install -r "$PROJECT_DIR/scripts/requirements.txt"
+        info "Dependencies installed successfully"
+    else
+        error "requirements.txt not found at $PROJECT_DIR/scripts/requirements.txt"
+        return 1
+    fi
+}
+
+# --- Verify installation ---
+
+verify_installation() {
+    # shellcheck source=/dev/null
+    source "$PROJECT_DIR/venv/bin/activate"
+
+    info "Verifying installed packages..."
+    pip list | head -30
+    echo ""
+    info "Installation complete!"
+}
+
+# --- Main ---
+
+echo ""
+echo "========================================="
+echo "  AI Study Repository Setup"
+echo "========================================="
+echo ""
+
+if ! check_python; then
+    error "Python 3 is required. Install from https://www.python.org/"
+    exit 1
 fi
 
-PYTHON_VERSION=$(python3 --version 2>&1 | awk '{print $2}')
-info "Found Python $PYTHON_VERSION"
-
-if ! command -v pip3 &>/dev/null && ! python3 -m pip --version &>/dev/null 2>&1; then
-    error "pip is required but not found. Install it with: python3 -m ensurepip"
+if ! check_pip; then
+    error "pip3 is required"
+    exit 1
 fi
 
-# --- Create virtual environment ---
-
-VENV_DIR="$PROJECT_DIR/venv"
-
-if [ -d "$VENV_DIR" ]; then
-    info "Virtual environment already exists at $VENV_DIR"
-else
-    info "Creating virtual environment..."
-    python3 -m venv "$VENV_DIR"
-    info "Virtual environment created at $VENV_DIR"
-fi
-
-# Activate venv
-source "$VENV_DIR/bin/activate"
-info "Virtual environment activated"
-
-# Upgrade pip
-pip install --upgrade pip --quiet
-
-# --- Install dependencies ---
-
-info "Installing packages from requirements.txt..."
-pip install --quiet -r "$SCRIPT_DIR/requirements.txt"
-
-# --- Summary ---
+setup_venv
+install_dependencies
+verify_installation
 
 echo ""
-info "Setup complete!"
+info "Next steps:"
+echo "  1. Activate the virtual environment:"
+echo "     source $PROJECT_DIR/venv/bin/activate"
 echo ""
-info "To activate the virtual environment:"
-info "  source $VENV_DIR/bin/activate"
+echo "  2. Start working:"
+echo "     cd $PROJECT_DIR"
+echo "     jupyter notebook"
 echo ""
-info "Installed packages:"
-pip list --format=columns 2>/dev/null | head -30 || true
-echo "  ..."
-echo ""
-info "To run Jupyter notebooks:"
-info "  jupyter notebook"
+echo "  3. Deactivate when done:"
+echo "     deactivate"
 echo ""
